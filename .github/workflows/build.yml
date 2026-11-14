@@ -9,9 +9,10 @@ jobs:
       - name: Detectar carpeta del proyecto
         id: proj
         run: |
-          f=$(find . -maxdepth 3 -name settings.gradle -not -path './.git/*' | head -n 1)
+          f=$(find . -name settings.gradle -not -path './.git/*' | head -n 1)
           if [ -z "$f" ]; then
-            echo "No se encontró settings.gradle en el repositorio"
+            echo "No se encontró settings.gradle. Estos son los archivos del repositorio:"
+            find . -not -path './.git/*' -type f | head -n 80
             exit 1
           fi
           echo "dir=$(dirname "$f")" >> "$GITHUB_OUTPUT"
