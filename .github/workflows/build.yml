@@ -5,15 +5,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Detectar carpeta del proyecto
+        id: proj
+        run: |
+          f=$(find . -maxdepth 3 -name settings.gradle -not -path './.git/*' | head -n 1)
+          if [ -z "$f" ]; then
+            echo "No se encontró settings.gradle en el repositorio"
+            exit 1
+          fi
+          echo "dir=$(dirname "$f")" >> "$GITHUB_OUTPUT"
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 25
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: current
-      - run: gradle build
+
+      - name: Compilar
+        run: gradle build
+        working-directory: ${{ steps.proj.outputs.dir }}
+
       - uses: actions/upload-artifact@v4
         with:
-          name: reino-micotico
-          path: build/libs/*.jar
+          name: bestiario-legendario
+          path: ${{ steps.proj.outputs.dir }}/build/libs/*.jar
