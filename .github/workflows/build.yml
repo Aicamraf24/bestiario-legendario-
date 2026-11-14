@@ -6,6 +6,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Descomprimir el ZIP si el proyecto está dentro de uno
+        run: |
+          if [ -z "$(find . -name settings.gradle -not -path './.git/*' | head -n 1)" ]; then
+            for z in $(find . -maxdepth 2 -name '*.zip' -not -path './.git/*'); do
+              echo "Descomprimiendo $z"
+              unzip -q -o "$z" -d _proyecto
+            done
+          fi
+
       - name: Detectar carpeta del proyecto
         id: proj
         run: |
